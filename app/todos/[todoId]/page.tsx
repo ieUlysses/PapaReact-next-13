@@ -31,7 +31,7 @@ async function TodoPage({ params: { todoId } }: PageProps) {
             </p>
 
             <p>
-                Status: {todo.completed ? "Outstanding" : "Done"}
+                Status: {todo.completed ? "Done" : "Outstanding"}
             </p>
 
             <p className='border-t border-white mt-5 text-right border-dashed'>
