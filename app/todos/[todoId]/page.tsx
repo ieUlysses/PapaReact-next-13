@@ -1,6 +1,8 @@
 import React from 'react'
 import { Todo } from '../../../typings';
 
+
+
 type PageProps = {
     params: {
         todoId: string;
@@ -8,13 +10,23 @@ type PageProps = {
     }
 }
 
+
+// adding static site rendering and isr 
+
+/* cache: "force-cache" forces browzer to create a cache
+forces static site rendering. Static add force cache
+
+adding next revalidate activates isr incremental static rendering along with a time value in seconds causes the brozer to revalidate annd rebuild the chahce after the allottetd time
+*/
 const fetchTodo = async (todoId: string) => {
-    const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`);
+    const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`, { next: { revalidate: 60 } });
 
     const todo: Todo = await res.json()
     return todo
 
 }
+
+//Origionall the todo page is server side rendered pros are the page is visible faster as it is pre rendering by the browser. con is the page takes longer to respond to user input. 
 
 
 async function TodoPage({ params: { todoId } }: PageProps) {
@@ -42,3 +54,12 @@ async function TodoPage({ params: { todoId } }: PageProps) {
 }
 
 export default TodoPage
+
+export async function generateStaticParams() {
+    const res = await fetch("https://jsonplaceholder.typicode.com/todos/");
+    const todos: Todo[] = await res.json();
+
+    const splicedTodos = todos.splice(1, 10)/* Pre renders first 10pages */
+
+    return splicedTodos.map(todo => ({ todoId: todo.id.toString(), }))
+}
